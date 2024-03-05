@@ -1,0 +1,12 @@
+{
+  "name": "POS-utils",
+  "version": "1.0.0",
+  "main": "app.js",
+  "repository": "https://github.com/samjwalsh/POS-utils.git",
+  "author": "Sam Walsh <samjwalsh05@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "dotenv": "^16.3.1",
+    "mongoose": "^8.0.3"
+  }
+}
