@@ -66,7 +66,6 @@ const getZ = async (range, options) => {
   return output;
 };
 
-// This works
 const addOrders = (orders) => {
   let shopCashTotal = 0;
   let shopCardTotal = 0;
