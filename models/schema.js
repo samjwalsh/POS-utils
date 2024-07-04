@@ -1,46 +1,72 @@
-const { serial, text, timestamp, integer, boolean, real, pgSchema } = require("drizzle-orm/pg-core");
+const {
+  serial,
+  text,
+  timestamp,
+  integer,
+  boolean,
+  real,
+  json,
+  pgSchema,
+} = require('drizzle-orm/pg-core');
 const { relations } = require('drizzle-orm');
 
-const ordersSchema = pgSchema("orders_schema");
+const ordersSchema = pgSchema('orders_schema');
 const paymentMethod = ordersSchema.enum('paymentMethod', ['Card', 'Cash']);
-const orders = ordersSchema.table('orders', {
-    id: text('id').primaryKey(),
-    time: timestamp('time').notNull(),
-    shop: text('shop').notNull(),
-    till: integer('till').notNull(),
-    deleted: boolean('deleted').notNull(),
-    eod: boolean('eod').notNull(),
-    subtotal: real('subtotal').notNull(),
-    paymentMethod: paymentMethod('payment_method').notNull(),
+const ordersTable = ordersSchema.table('orders', {
+  id: text('id').primaryKey(),
+  time: timestamp('time').notNull(),
+  shop: text('shop').notNull(),
+  till: integer('till').notNull(),
+  deleted: boolean('deleted').notNull(),
+  eod: boolean('eod').notNull(),
+  rba: boolean('rba').default(false),
+  subtotal: real('subtotal').notNull(),
+  paymentMethod: paymentMethod('payment_method').notNull(),
 });
 
-const orderRelations = relations(orders, ({ many }) => ({
-    items: many(items),
-}));
+// export const orderRelations = relations(ordersTable, ({ many }) => ({
+//     items: many(itemsTable),
+// }));
 
 const itemsSchema = pgSchema('items_schema');
-const items = itemsSchema.table('items', {
-    id: serial('id').primaryKey(),
-    name: text('name').notNull(),
-    price: real('price').notNull(),
-    quantity: integer('quantity').notNull(),
-    addons: text('addons').array().notNull(),
-    orderId: text('order_id').notNull()
-})
+const itemsTable = itemsSchema.table('items', {
+  id: serial('id').primaryKey(),
+  name: text('name').notNull(),
+  price: real('price').notNull(),
+  quantity: integer('quantity').notNull(),
+  addons: text('addons').array().notNull(),
+  orderId: text('order_id')
+    .notNull()
+    .references(() => ordersTable.id),
+});
 
-const itemsRelations = relations(items, ({ one }) => ({
-    order: one(orders, {
-        fields: [items.orderId],
-        references: [orders.id],
-    }),
-}));
+// export const itemsRelations = relations(itemsTable, ({ one }) => ({
+//     order: one(ordersTable, {
+//         fields: [itemsTable.orderId],
+//         references: [ordersTable.id],
+//     }),
+// }));
 
-module.exports = {
-    ordersSchema,
-    paymentMethod,
-    orders,
-    orderRelations,
-    itemsSchema,
-    items,
-    itemsRelations,
-}
+const vouchersSchema = pgSchema('vouchers_schema');
+const vouchersTable = vouchersSchema.table('vouchers', {
+  dateCreated: timestamp('date_created').notNull(),
+  shopCreated: text('shop_created').notNull(),
+  tillCreated: text('till_created').notNull(),
+  value: real('value').notNull(),
+  code: text('code').primaryKey(),
+  redeemed: boolean('redeemed').notNull(),
+  dateRedeemed: timestamp('date_redeemed'),
+  shopRedeemed: text('shop_redeemed'),
+  tillRedeemed: text('till_redeemed'),
+});
+
+const logsSchema = pgSchema('logs_schema');
+const logsTable = logsSchema.table('logs', {
+  time: timestamp('time').notNull(),
+  source: text('source').notNull(),
+  note: text('note'),
+  json: json('json'),
+  message: text('message'),
+});
+
+module.exports = { ordersTable, itemsTable };
