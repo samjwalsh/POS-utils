@@ -24,9 +24,9 @@ const ordersTable = ordersSchema.table('orders', {
   paymentMethod: paymentMethod('payment_method').notNull(),
 });
 
-// export const orderRelations = relations(ordersTable, ({ many }) => ({
-//     items: many(itemsTable),
-// }));
+const orderRelations = relations(ordersTable, ({ many }) => ({
+  items: many(itemsTable),
+}));
 
 const itemsSchema = pgSchema('items_schema');
 const itemsTable = itemsSchema.table('items', {
@@ -35,17 +35,15 @@ const itemsTable = itemsSchema.table('items', {
   price: real('price').notNull(),
   quantity: integer('quantity').notNull(),
   addons: text('addons').array().notNull(),
-  orderId: text('order_id')
-    .notNull()
-    .references(() => ordersTable.id),
+  orderId: text('order_id').notNull(),
 });
 
-// export const itemsRelations = relations(itemsTable, ({ one }) => ({
-//     order: one(ordersTable, {
-//         fields: [itemsTable.orderId],
-//         references: [ordersTable.id],
-//     }),
-// }));
+const itemsRelations = relations(itemsTable, ({ one }) => ({
+  order: one(ordersTable, {
+    fields: [itemsTable.orderId],
+    references: [ordersTable.id],
+  }),
+}));
 
 const vouchersSchema = pgSchema('vouchers_schema');
 const vouchersTable = vouchersSchema.table('vouchers', {
@@ -62,6 +60,7 @@ const vouchersTable = vouchersSchema.table('vouchers', {
 
 const logsSchema = pgSchema('logs_schema');
 const logsTable = logsSchema.table('logs', {
+  id: serial('id').primaryKey(),
   time: timestamp('time').notNull(),
   source: text('source').notNull(),
   note: text('note'),
@@ -69,4 +68,4 @@ const logsTable = logsSchema.table('logs', {
   message: text('message'),
 });
 
-module.exports = { ordersTable, itemsTable };
+module.exports = { ordersTable, itemsTable, logsTable, vouchersTable };
