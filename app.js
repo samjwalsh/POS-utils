@@ -25,15 +25,15 @@ connection.once('open', function () {
 });
 
 (async () => {
-  // console.log(
-  //   await getZ({
-  //     start: '2024-04-13',
-  //     // end: '2025-01-01',
-  //   })
-  // );
+  console.log(
+    await getZ({
+      start: '2024-07-04',
+      // end: '2025-01-01',
+    })
+  );
   // console.log(await getX());
   // await daySheetToOrders('2024-04-21', '2024-04-21', 'Main', false)
-  await toDrizzle('2023-01-01', '2025-01-01')
+  // await toDrizzle('2023-01-01', '2025-01-01')
   // await orderFreq({ start: '2024-04-13' }, { shops: ['Lighthouse'] });
   // await shopProp({ start: '2023-04-13', end: '2025-01-01' });
   // await orderFreq({start:'2023-01-01', end: '2025-01-01'})
